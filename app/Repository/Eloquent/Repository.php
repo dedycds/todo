@@ -4,7 +4,7 @@ use App\Repository\RepositoryInterface;
 use App\Entitiy\Eloquent\Entity;
 
 /**
- * 
+ * Base class for repository
  */
 abstract class Repository implements RepositoryInterface 
 {
