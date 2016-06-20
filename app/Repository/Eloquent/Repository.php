@@ -2,6 +2,8 @@
 
 use App\Repository\RepositoryInterface;
 use App\Entitiy\Eloquent\Entity;
+use App\Validators\Validator as ValidatorService;
+use App\Exceptions\ValidationException;
 
 /**
  * Base class for repository
@@ -31,10 +33,7 @@ abstract class Repository implements RepositoryInterface
 		$model = $this->entity->find($id);
 
 		if($model === null && $throwException){
-			throw new EntityNotFoundException(
-				$this->getEntityName($this->entity),
-				['id' => $id]
-			);
+			throw new \Exception("Data " . $this->getEntityName($this->entity) . " tidak ditemukan");
 		}
 
 		if($with)
@@ -159,7 +158,7 @@ abstract class Repository implements RepositoryInterface
      * @throws 
      * @throws ValidationException
      */
-    public function validate(array $attributes, $validator, $operation)
+    public function validate(array $attributes, $validator)
     {
         if (is_string($validator)) {
             $validator = \App::make($validator);
@@ -167,7 +166,7 @@ abstract class Repository implements RepositoryInterface
         if (!$validator instanceof ValidatorService) {
             throw new SiganaException('Unable to resolve validator class');
         }
-        if (!$validator->with(['input' => $attributes])->valid($operation)) {
+        if (!$validator->with(['input' => $attributes])->passes()) {
             throw new ValidationException($validator);
         }
     }
